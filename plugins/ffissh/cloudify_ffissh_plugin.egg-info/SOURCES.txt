@@ -1,0 +1,6 @@
+cloudify_ffissh_plugin.egg-info/PKG-INFO
+cloudify_ffissh_plugin.egg-info/SOURCES.txt
+cloudify_ffissh_plugin.egg-info/dependency_links.txt
+cloudify_ffissh_plugin.egg-info/top_level.txt
+ffissh_plugin/__init__.py
+ffissh_plugin/tasks.py
