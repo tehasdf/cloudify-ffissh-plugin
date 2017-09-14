@@ -49,7 +49,7 @@ class NetstringMultiCtxProxy(object):
             ctx = self.context
             resp = CtxProxy(ctx, '').process(ns)
             resp = '{0}:{1},'.format(len(resp), resp)
-            chan.write(resp)
+            chan.write(resp.encode('utf-8'))
             chan.close()
 
 
@@ -188,14 +188,13 @@ def run_script(ctx, script_path, client, proxy, env=None, use_sudo=False,
                stdin=None, **kwargs):
     base_dir = '/tmp/cloudify-ctx'
     work_dir = os.path.join(base_dir, 'work')
-    proxy_client_path = proxy_client.__file__
-    proxy_client_path = 'resources/proxy_client.py'
+    proxy_client_path = os.path.join(os.path.dirname(__file__),
+                                     'proxy_client.py')
     local_ctx_py_path = os.path.join(
         os.path.dirname(cloudify.ctx_wrappers.__file__), 'ctx-py.py')
     script_path = get_script(ctx.download_resource, script_path)
     remote_ctx_path = os.path.join(base_dir, 'ctx')
 
-    import pudb; pu.db  # NOQA
     _run_command(client, 'mkdir -p {0}'.format(work_dir))
     with client.open_sftp() as sftp:
         sftp.put(proxy_client_path, remote_ctx_path)
@@ -205,7 +204,7 @@ def run_script(ctx, script_path, client, proxy, env=None, use_sudo=False,
     out, _err = _run_command(client, 'mktemp -d --tmpdir={0}'.format(work_dir))
     remote_script_dir = out.strip()
     remote_script_path = os.path.join(remote_script_dir, 'script')
-    import pudb; pu.db  # NOQA
+
     with client.open_sftp() as sftp:
         sftp.put(script_path, remote_script_path)
     _run_command(client, 'chmod +x {0}'.format(remote_script_path))
